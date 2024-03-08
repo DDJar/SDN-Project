@@ -8,7 +8,7 @@ export const logout = async () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("username");
     delete axios.defaults.headers.common['Authorization'];
-  
+    window.location.href = `/`;
 };
 
 export const postLogin = async (LoginDTO) => {

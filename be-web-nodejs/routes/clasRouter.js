@@ -9,7 +9,7 @@ classRouter.use(bodyParser.json());
 //task2 ass3
 classRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-    .get(cors.cors, (req, res, next) => {
+    .get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
         Class.find({})
             .then((Class) => {
                 res.statusCode = 200;

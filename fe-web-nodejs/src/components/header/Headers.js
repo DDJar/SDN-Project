@@ -13,9 +13,7 @@ function Header() {
     }, []);
     const handleLogout = () => {
         logout();
-
         setUsername('')
-        window.location.reload();
     };
     return (
         <header id="header" className="fixed-top">
