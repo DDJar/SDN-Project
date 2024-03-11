@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { postLogin } from '../../service/loginService';
 function LoginPage() {
   const [userLogin, setUserLogin] = useState({
-    username: '',
+    emailOrPhone: '',
     password: ''
   })
   const [viewPass, setviewPass] = useState(true);
@@ -11,9 +11,10 @@ function LoginPage() {
   }
   const onSubmitLogin = async () => {
     try {
-      if (userLogin.username !== '' && userLogin.password !== '') {
+      if (userLogin.emailOrPhone !== '' && userLogin.password !== '') {
+        console.log(userLogin)
         let res = await postLogin(userLogin);
-        console.log(res.data);
+        console.log(res);
         window.location.href = `/`;
       }
     } catch (error) {
@@ -30,7 +31,7 @@ function LoginPage() {
               
                   <a href='/'><button type="button" className="btn btn-link"> {'<----'} Back Home</button></a>
              
-                <h3 className="text-3xl font-extrabold">Sign in</h3>
+                <h3 className="text-3xl font-extrabold">Login in</h3>
                 <p className="text-sm mt-4 ">
                   Don't have an account{" "}
                   <a
@@ -42,15 +43,15 @@ function LoginPage() {
                 </p>
               </div>
               <div>
-                <label className="text-xs block mb-2">UserName</label>
+                <label className="text-xs block mb-2">Email Or PhoneNumber</label>
                 <div className="relative flex items-center">
-                  <input onChange={(e) => setUserLogin({ ...userLogin, username: e.target.value })}
-                    value={userLogin.username}
+                  <input onChange={(e) => setUserLogin({ ...userLogin, emailOrPhone: e.target.value })}
+                    value={userLogin.emailOrPhone}
                     name="username"
                     type="text"
                     required=""
                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
-                    placeholder="Enter username"
+                    placeholder="Enter email or phoneNumber"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -18,7 +18,7 @@ router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (r
     .catch((err) => next(err));
 });
 router.post('/signup', cors.corsWithOptions, (req, res, next) => {
-  User.register(new User({ username: req.body.username }),
+  User.register(new User({ username:  req.body.lastname +" " +req.body.firstname  }),
     req.body.password, (err, user) => {
       if (err) {
         res.statusCode = 500;
@@ -26,20 +26,16 @@ router.post('/signup', cors.corsWithOptions, (req, res, next) => {
         res.json({ err: err });
       }
       else {
-      if(req.body.firstname || req.body.lastname || req.body.email || req.body.address || req.body.dob){
         user.firstname = req.body.firstname;
         user.lastname = req.body.lastname;
         user.email = req.body.email;
-        user.address = req.body.address;
-        user.dob = req.body.dob;
-      }
-        user.save().then(user => {
-          passport.authenticate('local', { session: false })(req, res, () => {
-            var token = authenticate.getToken({ _id: req.user._id });
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json({ success: true, token: token, status: 'Registration Successful!' });
-          });
+        user.phoneNumber = req.body.phone;
+        user.password = req.body.password
+        user.save().then(users => {
+              var token = authenticate.getToken({ _id: users._id });
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.json({ success: true, token: token, status: 'Registration Successful!',username: users.username });
         }).catch(err => {
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
@@ -48,17 +44,39 @@ router.post('/signup', cors.corsWithOptions, (req, res, next) => {
       }
     });
 });
-router.post('/login', cors.corsWithOptions, passport.authenticate('local', { session: false }), (req, res) => {
-  var token = authenticate.getToken({ _id: req.user._id });
-  const username = req.user.username;
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ success: true, token: token, username: username });
+router.post('/login', cors.corsWithOptions, (req, res, next) => {
+  const loginValue = req.body.emailOrPhone;
+  function isEmail(value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  }
+  const loginField = isEmail(loginValue) ? 'email' : 'phoneNumber';
+  console.log(loginField +" "+loginValue )
+  User.findOne({ [loginField]: loginValue })
+    .then((user) => {
+      console.log(user)
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication failed',
+          info: 'User not found'
+        });
+      }
+      var token = authenticate.getToken({ _id: user._id });
+
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({ success: true, token: token, status: 'Login Successful!', username: user.username });
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 router.get('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');
+    delete req.headers.authorization
     res.json({ success: true, status: 'Logout Successful!' });
   }
   else {
