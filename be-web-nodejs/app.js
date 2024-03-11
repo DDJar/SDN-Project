@@ -4,6 +4,7 @@ var express = require("express");
 var session = require("express-session");
 var FileStore = require("session-file-store")(session);
 
+require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -12,6 +13,7 @@ const Dishes = require("./models/dishes");
 const Class = require("./models/class");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var authRouter = require("./routes/authRouter");
 var dishRouter = require("./routes/dishRouter");
 var classRouter = require("./routes/clasRouter");
 var uploadRouter = require("./routes/uploadRouter");
@@ -22,25 +24,35 @@ var authenticate = require("./authenticate");
 //token
 var config = require("./config");
 const cors = require("cors");
+const loginWithGoogle = require("./routes/social/google");
 
 var app = express();
 const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 // //required to use session not ignore
-
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 app.use(cors());
-app.use(cors({
+app.use(
+  cors({
     origin: "http://localhost:3000",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
     optionsSuccessStatus: 204,
-}));
-
+  })
+);
 //passport
 app.use(passport.initialize());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/", authRouter);
 
 connect.then((db) => {
   console.log("Connected correctly to server");
@@ -48,7 +60,7 @@ connect.then((db) => {
   (err) => {
     console.log(err);
   };
-  
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -81,4 +93,5 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
+loginWithGoogle();
 module.exports = app;
