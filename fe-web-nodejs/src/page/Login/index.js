@@ -1,25 +1,45 @@
 import React, { useState } from 'react';
-import { postLogin } from '../../service/loginService';
+import { postLogin,initiateGoogleLogin } from '../../service/loginService';
 function LoginPage() {
   const [userLogin, setUserLogin] = useState({
-    username: '',
+    emailOrPhone: '',
     password: ''
   })
+  const [error, setError] = useState('');
   const [viewPass, setviewPass] = useState(true);
   const handViewPass = () => {
     setviewPass(!viewPass)
   }
+  const validation = (value)=>{
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^\d{10}$/.test(value);
+  }
   const onSubmitLogin = async () => {
     try {
-      if (userLogin.username !== '' && userLogin.password !== '') {
+      if (userLogin.emailOrPhone !== '' && userLogin.password !== '') {
+        if (!validation(userLogin.emailOrPhone)) {
+          setError('Invalid email or phone format.');
+          return;
+        }
+        console.log(userLogin)
         let res = await postLogin(userLogin);
-        console.log(res.data);
+        console.log(res);
         window.location.href = `/`;
+      } else {
+        setError('Email/Phone and password are required.');
       }
     } catch (error) {
       console.error("Axios Error:", error);
     }
   };
+  const handleGoogleLogin = async () => {
+    try {
+      const data = initiateGoogleLogin();
+      console.log(data);
+    } catch (error) {
+      console.error("Axios Error:", error);
+    }
+   
+};
   return (
     <div className="font-[sans-serif] text-[#333]">
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -30,7 +50,7 @@ function LoginPage() {
               
                   <a href='/'><button type="button" className="btn btn-link"> {'<----'} Back Home</button></a>
              
-                <h3 className="text-3xl font-extrabold">Sign in</h3>
+                <h3 className="text-3xl font-extrabold">Login in</h3>
                 <p className="text-sm mt-4 ">
                   Don't have an account{" "}
                   <a
@@ -42,15 +62,15 @@ function LoginPage() {
                 </p>
               </div>
               <div>
-                <label className="text-xs block mb-2">UserName</label>
+                <label className="text-xs block mb-2">Email Or PhoneNumber</label>
                 <div className="relative flex items-center">
-                  <input onChange={(e) => setUserLogin({ ...userLogin, username: e.target.value })}
-                    value={userLogin.username}
+                  <input onChange={(e) => setUserLogin({ ...userLogin, emailOrPhone: e.target.value })}
+                    value={userLogin.emailOrPhone}
                     name="username"
                     type="text"
                     required=""
                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
-                    placeholder="Enter username"
+                    placeholder="Enter email or phoneNumber"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -148,14 +168,14 @@ function LoginPage() {
                   type="button"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                 >
-                  Sign in
+                Login
                 </button>
               </div>
               <p className="my-8 text-sm text-gray-400 text-center">
                 or continue with
               </p>
               <div className="space-x-8 flex justify-center">
-                <button type="button" className="border-none outline-none">
+                <button type="button" className="border-none outline-none"  onClick={handleGoogleLogin}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30px"
