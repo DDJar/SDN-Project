@@ -1,12 +1,14 @@
 import axios from "./axiosConfig";
+import Cookies from "js-cookie";
 export const setAuthToken = ({ token, username }) => {
-  window.localStorage.setItem("accessToken", token);
-  window.localStorage.setItem("username", username);
+  Cookies.set("token", token)
+  Cookies.set("username", username)
 };
 export const logout = async () => {
   axios.get("/users/logout");
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("username");
+  Cookies.remove("token")
+  Cookies.remove("username")
+  Cookies.remove("info")
   delete axios.defaults.headers.common["Authorization"];
   window.location.href = `/`;
 };

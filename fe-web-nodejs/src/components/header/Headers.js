@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {Dropdown} from "react-bootstrap";
 import { logout } from "../../service/loginService";
+import Cookies from "js-cookie";
 function Header() {
     const [username, setUsername] = useState("");
 
     useEffect(() => {
-        const storedUsername = localStorage.getItem("username");
+        const storedUsername = Cookies.get("username");
         if (storedUsername) {
             setUsername(storedUsername);
         }

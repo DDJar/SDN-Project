@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { postRegist } from '../../service/loginService';
+import { postRegist,initiateGoogleLogin } from '../../service/loginService';
 function RegistPage() {
     const [userRegiste, setUserRegist] = useState({
-        firstname: '',
-        lastname: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         password: ''
@@ -35,6 +35,15 @@ function RegistPage() {
             console.error("Axios Error:", error);
         }
     };
+    const handleGoogleLogin = async () => {
+        try {
+          const data = initiateGoogleLogin();
+          console.log(data);
+        } catch (error) {
+          console.error("Axios Error:", error);
+        }
+       
+    };
     return (
         <div className="font-[sans-serif] text-[#333]">
             <div className="min-h-screen flex flex-col items-center justify-center">
@@ -49,7 +58,7 @@ function RegistPage() {
                             <label className=" block mb-2 ">First Name</label>
                             <div className="relative flex items-center ">
                                 <input onChange={(e) => setUserRegist({ ...userRegiste, firstname: e.target.value })}
-                                    value={userRegiste.firstname}
+                                    value={userRegiste.firstName}
                                     name="firstname"
                                     type="text"
                                     required=""
@@ -62,7 +71,7 @@ function RegistPage() {
                             <label className=" block mb-2">Last Name</label>
                             <div className="relative flex items-center">
                                 <input onChange={(e) => setUserRegist({ ...userRegiste, lastname: e.target.value })}
-                                    value={userRegiste.lastname}
+                                    value={userRegiste.lastName}
                                     name="lastname"
                                     type="text"
                                     required=""
@@ -215,7 +224,7 @@ function RegistPage() {
                             or continue with
                         </p>
                         <div className="space-x-8 flex justify-center">
-                            <button type="button" className="border-none outline-none">
+                            <button onClick={handleGoogleLogin} type="button" className="border-none outline-none">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="30px"

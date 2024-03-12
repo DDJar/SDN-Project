@@ -19,7 +19,7 @@ function loginWithGoogle() {
           email: profile.emails ? profile.emails[0].value : "",
           imgAvt: profile.photos ? profile.photos[0].value : null,
           typeRegist: profile.provider,
-          username: profile.name.familyName + ' '+profile.name.givenName
+          username: profile.name.givenName + ' '+profile.name.familyName
         };
         console.log(user);
         try {

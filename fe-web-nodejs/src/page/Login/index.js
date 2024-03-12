@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { postLogin, initiateGoogleLogin } from "../../service/loginService";
-import Cookies from "js-cookie";
+
 function LoginPage() {
   const [userLogin, setUserLogin] = useState({
     emailOrPhone: "",
@@ -35,8 +35,6 @@ function LoginPage() {
   const handleGoogleLogin = async () => {
     try {
       initiateGoogleLogin();
-      const info = Cookies.get("info");
-      console.log(info);
     } catch (error) {
       console.error("Axios Error:", error);
     }
@@ -162,17 +160,7 @@ function LoginPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between gap-2 mt-5">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm">
-                    Remember me
-                  </label>
-                </div>
+                
                 <div>
                   <a
                     href="jajvascript:void(0);"

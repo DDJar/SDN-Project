@@ -21,8 +21,9 @@ exports.verifyUser = (req, res, next) => {
   var token =
     req.body.token ||
     req.query.token ||
-    req.headers["x-access-token"] ||
+    req.headers["x-token"] ||
     req.headers.authorization.split(" ")[1];
+    console.log( req)
   jwt.verify(token, config.secretKey, (verifyErr, decoded) => {
     if (verifyErr) {
       const err = new Error(
@@ -99,8 +100,8 @@ exports.facebookPassport = passport.use(
 );
 
 passport.use(new LocalStrategy(User.authenticate(), { session: false }));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
