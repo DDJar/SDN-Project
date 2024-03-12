@@ -20,6 +20,7 @@ function loginWithFacebook() {
           email: profile.emails ? profile.emails[0].value : "",
           imgAvt: profile.photos ? profile.photos[0].value : null,
           typeRegist: profile.provider,
+          username: profile.name.givenName + ' '+profile.name.familyName
         };
         try {
           user = await userServices.upsert(user);

@@ -6,7 +6,8 @@ function RegistPage() {
         lastName: '',
         email: '',
         phone: '',
-        password: ''
+        passwords: '',
+        username:''
     })
     const [error, setError] = useState();
     const [confiromPass, setConfiromPass] = useState('');
@@ -24,7 +25,10 @@ function RegistPage() {
     }
     const registerSubmit = async () => {
         try {
-            if (userRegiste.password === confiromPass) {
+            setUserRegist({ ...userRegiste, username: userRegiste.lastName+' '+userRegiste.firstName})
+            console.log(userRegiste);
+           
+            if (userRegiste.passwords === confiromPass) {
                 let res = await postRegist(userRegiste);
                 window.location.href = `/`;
             } else {
@@ -57,9 +61,9 @@ function RegistPage() {
                         <div>
                             <label className=" block mb-2 ">First Name</label>
                             <div className="relative flex items-center ">
-                                <input onChange={(e) => setUserRegist({ ...userRegiste, firstname: e.target.value })}
+                                <input onChange={(e) => setUserRegist({ ...userRegiste, firstName: e.target.value })}
                                     value={userRegiste.firstName}
-                                    name="firstname"
+                                    name="firstName"
                                     type="text"
                                     required=""
                                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
@@ -70,9 +74,9 @@ function RegistPage() {
                         <div>
                             <label className=" block mb-2">Last Name</label>
                             <div className="relative flex items-center">
-                                <input onChange={(e) => setUserRegist({ ...userRegiste, lastname: e.target.value })}
+                                <input onChange={(e) => setUserRegist({ ...userRegiste, lastName: e.target.value })}
                                     value={userRegiste.lastName}
-                                    name="lastname"
+                                    name="lastName"
                                     type="text"
                                     required=""
                                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
@@ -119,8 +123,8 @@ function RegistPage() {
                             <label className=" block mb-2">Password</label>
                             <div className="relative flex items-center">
                                 <input
-                                    value={userRegiste.password}
-                                    onChange={(e) => setUserRegist({ ...userRegiste, password: e.target.value })}
+                                    value={userRegiste.passwords}
+                                    onChange={(e) => setUserRegist({ ...userRegiste, passwords: e.target.value })}
                                     name="password"
                                     type={viewPass ? `password` : `text`}
                                     required=""

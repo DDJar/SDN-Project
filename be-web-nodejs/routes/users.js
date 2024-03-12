@@ -6,7 +6,7 @@ var passport = require('passport');
 router.use(bodyParser.json());
 var authenticate = require('../authenticate');
 const cors = require('./cors');
-
+const bcrypt = require('bcrypt');
 // task 3 ass3
 router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   User.find({})
@@ -18,31 +18,37 @@ router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (r
     .catch((err) => next(err));
 });
 router.post('/signup', cors.corsWithOptions, (req, res, next) => {
-  User.register(new User({ username:  req.body.lastName +" " +req.body.firstName  }),
-    req.body.password, (err, user) => {
-      if (err) {
-        res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({ err: err });
-      }
-      else {
-        user.firstName = req.body.firstName;
-        user.lastName = req.body.lastName;
-        user.email = req.body.email;
-        user.phoneNumber = req.body.phone;
-        user.password = req.body.password
-        user.save().then(users => {
-              var token = authenticate.getToken({ _id: users._id });
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json({ success: true, token: token, status: 'Registration Successful!',username: users.username });
-        }).catch(err => {
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({ err: err });
-        });;
-      }
+  const { firstName, lastName, email, phone, passwords } = req.body;
+
+  // Hash the password
+  bcrypt.hash(passwords, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error hashing the password.' });
+    }
+
+    // Create a new user with the hashed password
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phone,
+      passwords: hash, 
     });
+
+    newUser.save()
+      .then((user) => {
+        const token = authenticate.getToken({ _id: user._id });
+        res.status(200).json({
+          success: true,
+          token,
+          status: 'Registration Successful!',
+          username: user.lastName+" "+user.firstName,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      });
+  });
 });
 router.post('/login', cors.corsWithOptions, (req, res, next) => {
   const loginValue = req.body.emailOrPhone;

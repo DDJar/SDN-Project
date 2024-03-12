@@ -37,7 +37,6 @@ export const postRegist = async (RegistDTO) => {
     setAuthToken({ token, username });
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    return username;
   } catch (error) {
     console.error("Axios Error:", error);
     console.log("Error Response:", error.response?.data);
@@ -46,4 +45,7 @@ export const postRegist = async (RegistDTO) => {
 };
 export const initiateGoogleLogin = () => {
   window.location.href = "http://localhost:5000/auth/google";
+};
+export const initiateFacebookLogin = () => {
+  window.location.href = "http://localhost:5000/auth/facebook";
 };

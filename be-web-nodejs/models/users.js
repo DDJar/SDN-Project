@@ -4,11 +4,9 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var User = new Schema({
   firstName: {
     type: String,
-    require: true,
   },
   lastName: {
     type: String,
-    require: true,
   },
   typeRegist: {
     type: String,
@@ -16,9 +14,11 @@ var User = new Schema({
   },
   address: {
     type: String,
+    default: "",
   },
   email: {
     type: String,
+    default: "",
   },
   certicate: {
     type: String,
@@ -34,12 +34,23 @@ var User = new Schema({
   },
   phoneNumber: {
     type: String,
+    default: "",
+  },
+  passwords: {
+    type: String,
   },
   dob: {
     type: Date,
+    default: "",
   },
-  facebookId: String,
-  googleId: String,
+  facebookId: {
+    type: String,
+    default: "",
+  },
+  googleId: {
+    type: String,
+    default: "",
+  },
   admin: {
     type: Boolean,
     default: false,
