@@ -9,12 +9,10 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const mongoose = require("mongoose");
-const Dishes = require("./models/dishes");
 const Class = require("./models/class");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var authRouter = require("./routes/authRouter");
-var dishRouter = require("./routes/dishRouter");
 var classRouter = require("./routes/clasRouter");
 var uploadRouter = require("./routes/uploadRouter");
 //passport
@@ -75,7 +73,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/class", classRouter);
-app.use("/dishes", dishRouter);
 app.use("/imageUpload", uploadRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -10,7 +10,6 @@ var User = new Schema({
   },
   username: {
     type: String,
-    require: true
   },
   typeRegist: {
     type: String,
