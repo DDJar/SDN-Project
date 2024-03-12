@@ -7,10 +7,12 @@ async function resToken(req, res, next) {
     lastName: req.user.lastName,
     imgAvt: req.user.imgAvt,
     admin: req.user.admin,
+    username: req.user.firstName + " " + req.user.lastName,
   };
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.json({ success: true, token: token, info: info });
+  res.cookie("token", token);
+  res.cookie("info", JSON.stringify(info));
+  res.cookie("username", info.username);
+  res.redirect(`http://localhost:3000`);
 }
 
 module.exports = resToken;

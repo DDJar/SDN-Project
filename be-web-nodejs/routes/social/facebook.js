@@ -1,20 +1,21 @@
 var passport = require("passport");
-var GoogleStrategy = require("passport-google-oauth20").Strategy;
+var FacebookStrategy = require("passport-facebook");
 
 var userServices = require("../../service/user");
 
-function loginWithGoogle() {
+function loginWithFacebook() {
   passport.use(
-    new GoogleStrategy(
+    new FacebookStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL,
+        clientID: process.env.FACEBOOK_APP_ID,
+        clientSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+        profileFields: ["id", "displayName", "photos", "email"],
       },
       async function (accessToken, refreshToken, profile, cb) {
         let user = {
-          googleId: profile.id,
-          firstName: profile.name.familyName,
+          facebookId: profile.id,
+          firstName: profile.name.familyName || profile.displayName,
           lastName: profile.name.givenName,
           email: profile.emails ? profile.emails[0].value : "",
           imgAvt: profile.photos ? profile.photos[0].value : null,
@@ -30,5 +31,4 @@ function loginWithGoogle() {
     )
   );
 }
-
-module.exports = loginWithGoogle;
+module.exports = loginWithFacebook;

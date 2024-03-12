@@ -98,7 +98,7 @@ exports.facebookPassport = passport.use(
   )
 );
 
-passport.use(new LocalStrategy(User.authenticate(), { session: false }));
+// passport.use(new LocalStrategy(User.authenticate(), { session: false }));
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 passport.serializeUser((user, done) => {
