@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { postRegist,initiateGoogleLogin } from '../../service/loginService';
+import { postRegist,initiateGoogleLogin ,initiateFacebookLogin} from '../../service/loginService';
 function RegistPage() {
     const [userRegiste, setUserRegist] = useState({
         firstName: '',
