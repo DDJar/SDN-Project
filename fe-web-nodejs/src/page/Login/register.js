@@ -71,9 +71,14 @@ function RegistPage() {
                                 />
                             </div>
                         </div>
-                        <div className='mt-3 mb-5'>
-                            <label className="btn" onClick={() => handOption()}>Option</label>
-
+                        <div className='mt-3 mb-5 d-flex'>
+                        <div className='col-3'>
+                            <input type='radio' checked={option} id='idEmail' onChange={handOption} />  <label htmlFor='idEmail' >Email</label>
+                            </div>
+                            <div className='col-3'>
+                            <input type='radio'checked={!option} id='idPhone' onChange={handOption} />  <label htmlFor='idPhone' >Phone</label>
+                            </div>
+                            
                         </div>
                         {option ? (
                             <div>
@@ -180,6 +185,15 @@ function RegistPage() {
                             </div>
                         </div>
                         <div className="flex items-center justify-between gap-2 mt-5">
+                            <div className="flex items-center">
+                                <a
+                                    href="jajvascript:void(0);"
+                                    className="text-blue-600 font-semibold text-sm hover:underline"
+                                >
+                                  Have a account?
+                                </a>
+                                
+                            </div>
                             <div>
                                 <a
                                     href="jajvascript:void(0);"

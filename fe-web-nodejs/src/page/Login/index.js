@@ -5,22 +5,33 @@ function LoginPage() {
     emailOrPhone: '',
     password: ''
   })
+  const [error, setError] = useState('');
   const [viewPass, setviewPass] = useState(true);
   const handViewPass = () => {
     setviewPass(!viewPass)
   }
+  const validation = (value)=>{
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^\d{10}$/.test(value);
+  }
   const onSubmitLogin = async () => {
     try {
       if (userLogin.emailOrPhone !== '' && userLogin.password !== '') {
+        if (!validation(userLogin.emailOrPhone)) {
+          setError('Invalid email or phone format.');
+          return;
+        }
         console.log(userLogin)
         let res = await postLogin(userLogin);
         console.log(res);
         window.location.href = `/`;
+      } else {
+        setError('Email/Phone and password are required.');
       }
     } catch (error) {
       console.error("Axios Error:", error);
     }
   };
+
   return (
     <div className="font-[sans-serif] text-[#333]">
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -149,7 +160,7 @@ function LoginPage() {
                   type="button"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                 >
-                  Sign in
+                Login
                 </button>
               </div>
               <p className="my-8 text-sm text-gray-400 text-center">
