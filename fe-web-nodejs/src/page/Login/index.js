@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { postLogin } from '../../service/loginService';
+import { postLogin,initiateGoogleLogin } from '../../service/loginService';
 function LoginPage() {
   const [userLogin, setUserLogin] = useState({
     emailOrPhone: '',
@@ -31,7 +31,15 @@ function LoginPage() {
       console.error("Axios Error:", error);
     }
   };
-
+  const handleGoogleLogin = async () => {
+    try {
+      const data = initiateGoogleLogin();
+      console.log(data);
+    } catch (error) {
+      console.error("Axios Error:", error);
+    }
+   
+};
   return (
     <div className="font-[sans-serif] text-[#333]">
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -167,7 +175,7 @@ function LoginPage() {
                 or continue with
               </p>
               <div className="space-x-8 flex justify-center">
-                <button type="button" className="border-none outline-none">
+                <button type="button" className="border-none outline-none"  onClick={handleGoogleLogin}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30px"
