@@ -39,10 +39,11 @@ var User = new Schema({
     type: Date,
   },
   facebookId: String,
+  googleId: String,
   admin: {
     type: Boolean,
     default: false,
   },
 });
-User.plugin(passportLocalMongoose);
+// User.plugin(passportLocalMongoose);
 module.exports = mongoose.model("User", User);

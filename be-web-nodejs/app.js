@@ -24,7 +24,7 @@ var authenticate = require("./authenticate");
 //token
 var config = require("./config");
 const cors = require("cors");
-const loginWithGoogle = require("./routes/social/google");
+const socialAuth = require("./routes/social");
 
 var app = express();
 const url = config.mongoUrl;
@@ -93,5 +93,6 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-loginWithGoogle();
+socialAuth.loginWithFacebook();
+socialAuth.loginWithGoogle();
 module.exports = app;
