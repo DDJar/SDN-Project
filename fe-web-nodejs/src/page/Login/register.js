@@ -9,7 +9,16 @@ function RegistPage() {
         passwords: '',
         username:''
     })
-    const [error, setError] = useState();
+    const [error,setError]=useState("")
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        passwords: '',
+        confirmPassword: ' ',
+    });
+   
     const [confiromPass, setConfiromPass] = useState('');
     const [viewPass, setviewPass] = useState(true);
     const handViewPass = () => {
@@ -21,24 +30,40 @@ function RegistPage() {
     }
     const [option, setOption] = useState(true);
     const handOption = () => {
-        setOption(!option)
+        if(option){
+            setUserRegist({ ...userRegiste, phone: " " });
+            setOption(!option)
+        }else{
+            setUserRegist({ ...userRegiste, email: " " });
+            setOption(!option)
+        }
+      
     }
     const registerSubmit = async () => {
         try {
-            setUserRegist({ ...userRegiste, username: userRegiste.lastName+' '+userRegiste.firstName})
-            console.log(userRegiste);
-           
-            if (userRegiste.passwords === confiromPass) {
-                let res = await postRegist(userRegiste);
-                window.location.href = `/`;
+            setUserRegist({ ...userRegiste, username: userRegiste.lastName + ' ' + userRegiste.firstName });
+            const emptyFields = Object.keys(userRegiste).filter(
+                (field) => field !== 'phone' && field !== 'email' && !userRegiste[field]
+            );
+            if ((userRegiste.phone || userRegiste.email) && emptyFields.length === 0) {
+                if (userRegiste.passwords === confiromPass) {
+                    if (errors) {
+                        let res = await postRegist(userRegiste);
+                        window.location.href = `/`;
+                    } else {
+                        setError("You miss some detail");
+                    }
+                } else {
+                    setError("Password confirmation is not the same");
+                }
             } else {
-                setError("Password confirmation is not the same")
+                setError("Please fill in all required fields (except phone or email)");
             }
-
         } catch (error) {
             console.error("Axios Error:", error);
         }
     };
+    
     const handleGoogleLogin = async () => {
         try {
           const data = initiateGoogleLogin();
@@ -47,6 +72,41 @@ function RegistPage() {
           console.error("Axios Error:", error);
         }
        
+    };
+    const handleFaceBookLogin = async () => {
+        try {
+          initiateFacebookLogin();
+        } catch (error) {
+          console.error("Facebook Login Error:", error);
+        }
+      };
+    
+    const validation = (value) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^\d{10}$/.test(value);
+      };
+    const handleInputChange = (field, value) => {
+        setUserRegist({ ...userRegiste, [field]: value });
+    
+        // Validation logic
+        switch (field) {
+            case 'firstName':
+                setErrors({ ...errors, firstName: value ? '' : 'First name is required' });
+                break;
+            case 'lastName':
+                setErrors({ ...errors, lastName: value ? '' : 'Last name is required' });
+                break;
+            case 'email':
+                setErrors({ ...errors, email: validation(value) ? '' : 'Invalid email address' });
+                break;
+            case 'phone':
+                setErrors({ ...errors, phone: validation(value) ? '' : 'Invalid phone number' });
+                break;
+            case 'passwords':
+                setErrors({ ...errors, passwords: value.length >= 6 ? '' : 'Password must be at least 6 characters' });
+                break;
+            default:
+                break;
+        }
     };
     return (
         <div className="font-[sans-serif] text-[#333]">
@@ -61,7 +121,7 @@ function RegistPage() {
                         <div>
                             <label className=" block mb-2 ">First Name</label>
                             <div className="relative flex items-center ">
-                                <input onChange={(e) => setUserRegist({ ...userRegiste, firstName: e.target.value })}
+                                <input onChange={(e) => handleInputChange('firstName', e.target.value)}
                                     value={userRegiste.firstName}
                                     name="firstName"
                                     type="text"
@@ -70,11 +130,12 @@ function RegistPage() {
                                     placeholder="Enter First Name"
                                 />
                             </div>
+                            <span className="text-red-500 text-xs">{errors.firstName}</span>
                         </div>
                         <div>
                             <label className=" block mb-2">Last Name</label>
                             <div className="relative flex items-center">
-                                <input onChange={(e) => setUserRegist({ ...userRegiste, lastName: e.target.value })}
+                                <input onChange={(e) => handleInputChange('lastName', e.target.value)}
                                     value={userRegiste.lastName}
                                     name="lastName"
                                     type="text"
@@ -83,6 +144,7 @@ function RegistPage() {
                                     placeholder="Enter Last Name"
                                 />
                             </div>
+                            <span className="text-red-500 text-xs">{errors.lastName}</span>
                         </div>
                         <div className='mt-3 mb-5 d-flex'>
                         <div className='col-3'>
@@ -97,7 +159,7 @@ function RegistPage() {
                             <div>
                                 <label className=" block mb-2">Email</label>
                                 <div className="relative flex items-center">
-                                    <input onChange={(e) => setUserRegist({ ...userRegiste, email: e.target.value })}
+                                    <input onChange={(e) => handleInputChange('email', e.target.value)}
                                         value={userRegiste.email}
                                         name="email"
                                         type="email"
@@ -106,10 +168,11 @@ function RegistPage() {
                                         placeholder="Enter email"
                                     />
                                 </div>
+                                <span className="text-red-500 text-xs">{errors.email}</span>
                             </div>) : (<div>
                                 <label className=" block mb-2">Phone</label>
                                 <div className="relative flex items-center">
-                                    <input onChange={(e) => setUserRegist({ ...userRegiste, phone: e.target.value })}
+                                    <input onChange={(e) => handleInputChange('phone', e.target.value)}
                                         value={userRegiste.phone}
                                         name="phone"
                                         type="number"
@@ -117,14 +180,14 @@ function RegistPage() {
                                         className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
                                         placeholder="Enter phone"
                                     />
-                                </div>
+                                </div>  <span className="text-red-500 text-xs">{errors.phone}</span>
                             </div>)}
                         <div className="mt-8">
                             <label className=" block mb-2">Password</label>
                             <div className="relative flex items-center">
                                 <input
                                     value={userRegiste.passwords}
-                                    onChange={(e) => setUserRegist({ ...userRegiste, passwords: e.target.value })}
+                                    onChange={(e) => handleInputChange('passwords', e.target.value)}
                                     name="password"
                                     type={viewPass ? `password` : `text`}
                                     required=""
@@ -157,6 +220,7 @@ function RegistPage() {
                                     </svg>
                                 )}
                             </div>
+                            <span className="text-red-500 text-xs">{errors.passwords}</span>
                         </div>
                         <div className="mt-8">
                             <label className=" block mb-2">Confirom Password</label>
@@ -267,20 +331,8 @@ function RegistPage() {
                                     />
                                 </svg>
                             </button>
-                            <button type="button" className="border-none outline-none">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="30px"
-                                    fill="#000"
-                                    viewBox="0 0 22.773 22.773"
-                                >
-                                    <path
-                                        d="M15.769 0h.162c.13 1.606-.483 2.806-1.228 3.675-.731.863-1.732 1.7-3.351 1.573-.108-1.583.506-2.694 1.25-3.561C13.292.879 14.557.16 15.769 0zm4.901 16.716v.045c-.455 1.378-1.104 2.559-1.896 3.655-.723.995-1.609 2.334-3.191 2.334-1.367 0-2.275-.879-3.676-.903-1.482-.024-2.297.735-3.652.926h-.462c-.995-.144-1.798-.932-2.383-1.642-1.725-2.098-3.058-4.808-3.306-8.276v-1.019c.105-2.482 1.311-4.5 2.914-5.478.846-.52 2.009-.963 3.304-.765.555.086 1.122.276 1.619.464.471.181 1.06.502 1.618.485.378-.011.754-.208 1.135-.347 1.116-.403 2.21-.865 3.652-.648 1.733.262 2.963 1.032 3.723 2.22-1.466.933-2.625 2.339-2.427 4.74.176 2.181 1.444 3.457 3.028 4.209z"
-                                        data-original="#000000"
-                                    />
-                                </svg>
-                            </button>
-                            <button type="button" className="border-none outline-none">
+                            
+                            <button  onClick={handleFaceBookLogin} type="button" className="border-none outline-none">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="30px"

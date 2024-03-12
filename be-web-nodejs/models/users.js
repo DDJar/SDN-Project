@@ -8,6 +8,10 @@ var User = new Schema({
   lastName: {
     type: String,
   },
+  username: {
+    type: String,
+    require: true
+  },
   typeRegist: {
     type: String,
     default: "Local"

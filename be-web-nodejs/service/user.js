@@ -3,6 +3,7 @@ var User = require("../models/users");
 async function upsert(userInfo) {
   let user = null;
   try {
+    console.log(userInfo);
     user = await User.findOne({
       $or: [
         { facebookId: userInfo.facebookId },

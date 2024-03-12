@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { postLogin, initiateGoogleLogin,initiateFacebookLogin } from "../../service/loginService";
 
 function LoginPage() {
@@ -43,9 +43,10 @@ function LoginPage() {
     try {
       initiateFacebookLogin();
     } catch (error) {
-      console.error("Axios Error:", error);
+      console.error("Facebook Login Error:", error);
     }
   };
+
   return (
     <div className="font-[sans-serif] text-[#333]">
       <div className="min-h-screen flex flex-col items-center justify-center">
