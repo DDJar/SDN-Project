@@ -10,25 +10,6 @@ import Product from '../../components/product/Product.js';
 
 const Home = () => {
     const [orderPopup, setOrderPopup] = React.useState(false);
-    useEffect(() => {
-        fetchData()
-      }, []);
-      const fetchData = async () => {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.size !==0){
-                const token = urlParams.get('user');
-                const username = decodeURIComponent(urlParams.get('username'));
-                setAuthToken({token,username})
-
-                console.log(urlParams);
-            }
-          
-        
-         
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }}
     const handleOrderPopup = () => {
         setOrderPopup(!orderPopup);
     };

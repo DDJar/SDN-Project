@@ -7,9 +7,11 @@ function Header() {
     const [username, setUsername] = useState("");
 
     useEffect(() => {
-        const storedUsername = Cookies.get("username");
+        const storedUsername = Cookies.get("info");
+       
         if (storedUsername) {
-            setUsername(storedUsername);
+            const userData = JSON.parse(storedUsername);
+            setUsername(`${userData.firstName} ${userData.lastName}`);
         }
     }, []);
     const handleLogout = () => {

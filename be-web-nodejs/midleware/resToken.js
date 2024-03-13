@@ -13,11 +13,10 @@ async function resToken(req, res, next) {
     lastName: req.user.lastName,
     imgAvt: req.user.imgAvt,
     admin: req.user.admin,
-    username: req.user.firstName + " " + req.user.lastName,
   };
   res.cookie("token", token);
   res.cookie("info", JSON.stringify(info));
-  res.cookie("username", info.username);
+  res.cookie("username", JSON.stringify(req.user._id));
   res.redirect(`http://localhost:3000`);
 }
 

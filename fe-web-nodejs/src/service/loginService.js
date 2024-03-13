@@ -1,8 +1,9 @@
 import axios from "./axiosConfig";
 import Cookies from "js-cookie";
-export const setAuthToken = ({ token, username }) => {
+export const setAuthToken = ({ token,info, username }) => {
   Cookies.set("token", token)
-  Cookies.set("username", username)
+  Cookies.set("username", JSON.stringify(username))
+  Cookies.set("info", JSON.stringify(info))
 };
 export const logout = async () => {
   axios.get("/users/logout");
@@ -18,8 +19,8 @@ export const postLogin = async (LoginDTO) => {
     console.log(LoginDTO);
     const response = await axios.post("/users/login", LoginDTO);
 
-    const { token, username } = response.data;
-    setAuthToken({ token, username });
+    const { token,info ,username } = response.data;
+    setAuthToken({ token,info, username });
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     return username;
   } catch (error) {
@@ -33,8 +34,8 @@ export const postRegist = async (RegistDTO) => {
     const response = await axios.post("/users/signup", RegistDTO);
     console.log("Response:", response.data);
 
-    const { token, username } = response.data;
-    setAuthToken({ token, username });
+    const { token,info ,username } = response.data;
+    setAuthToken({ token,info, username });
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   } catch (error) {

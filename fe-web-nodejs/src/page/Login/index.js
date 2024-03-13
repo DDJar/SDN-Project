@@ -1,10 +1,17 @@
-import React, { useState,useEffect } from "react";
-import { postLogin, initiateGoogleLogin,initiateFacebookLogin } from "../../service/loginService";
+import React, { useState, useEffect } from "react";
+import { postLogin, initiateGoogleLogin, initiateFacebookLogin } from "../../service/loginService";
+import Cookies from "js-cookie";
 
 function LoginPage() {
+  useEffect(() => {
+    const storedCookie = Cookies.get("info");
+    if (storedCookie) {
+      window.location.href = `/`;
+    }
+  }, []);
   const [userLogin, setUserLogin] = useState({
     emailOrPhone: "",
-    password: "",
+    passwords: "",
   });
   const [error, setError] = useState("");
   const [viewPass, setviewPass] = useState(true);
@@ -29,7 +36,12 @@ function LoginPage() {
         setError("Email/Phone and password are required.");
       }
     } catch (error) {
-      console.error("Axios Error:", error);
+      if (error.response.status === 401) {
+        setError("Invalid email or phone or passwords")
+      } else {
+        console.error("Axios Error:", error);
+      }
+
     }
   };
   const handleGoogleLogin = async () => {
@@ -62,6 +74,7 @@ function LoginPage() {
                 </a>
 
                 <h3 className="text-3xl font-extrabold">Login in</h3>
+                <h4 className="text-danger font-extrabold">{error}</h4>
                 <p className="text-sm mt-4 ">
                   Don't have an account{" "}
                   <a
@@ -126,9 +139,9 @@ function LoginPage() {
                 <label className="text-xs block mb-2">Password</label>
                 <div className="relative flex items-center">
                   <input
-                    value={userLogin.password}
+                    value={userLogin.passwords}
                     onChange={(e) =>
-                      setUserLogin({ ...userLogin, password: e.target.value })
+                      setUserLogin({ ...userLogin, passwords: e.target.value })
                     }
                     name="password"
                     type={viewPass ? `password` : `text`}
@@ -168,7 +181,7 @@ function LoginPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between gap-2 mt-5">
-                
+
                 <div>
                   <a
                     href="jajvascript:void(0);"
@@ -234,9 +247,9 @@ function LoginPage() {
                     />
                   </svg>
                 </button>
-              
+
                 <button type="button" className="border-none outline-none"
-                 onClick={handleFaceBookLogin}>
+                  onClick={handleFaceBookLogin}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30px"

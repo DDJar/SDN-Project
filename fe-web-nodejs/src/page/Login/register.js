@@ -31,10 +31,10 @@ function RegistPage() {
     const [option, setOption] = useState(true);
     const handOption = () => {
         if(option){
-            setUserRegist({ ...userRegiste, phone: " " });
+            setUserRegist({ ...userRegiste, phone: "" });
             setOption(!option)
         }else{
-            setUserRegist({ ...userRegiste, email: " " });
+            setUserRegist({ ...userRegiste, email: "" });
             setOption(!option)
         }
       

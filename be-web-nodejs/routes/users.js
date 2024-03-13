@@ -7,6 +7,7 @@ router.use(bodyParser.json());
 var authenticate = require('../authenticate');
 const cors = require('./cors');
 const bcrypt = require('bcrypt');
+const { JSONCookie } = require('cookie-parser');
 // task 3 ass3
 router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   User.find({})
@@ -32,18 +33,22 @@ router.post('/signup', cors.corsWithOptions, (req, res, next) => {
       lastName,
       email,
       phoneNumber: phone,
-      passwords: hash, 
+      passwords: hash,
     });
 
     newUser.save()
       .then((user) => {
         const token = authenticate.getToken({ _id: user._id });
-        res.status(200).json({
-          success: true,
-          token,
-          status: 'Registration Successful!',
-          username: user.lastName+" "+user.firstName,
-        });
+        const infoUser = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imgAvt: user.imgAvt,
+          admin: user.admin,
+          username: user._id,
+        };
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ success: true, token: token, status: 'Login Successful!', info: infoUser, username: user._id });
       })
       .catch((error) => {
         res.status(500).json({ error: error.message });
@@ -57,22 +62,40 @@ router.post('/login', cors.corsWithOptions, (req, res, next) => {
     return emailRegex.test(value);
   }
   const loginField = isEmail(loginValue) ? 'email' : 'phoneNumber';
-  console.log(loginField +" "+loginValue )
   User.findOne({ [loginField]: loginValue })
     .then((user) => {
-      console.log(user)
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Authentication failed',
-          info: 'User not found'
-        });
-      }
-      var token = authenticate.getToken({ _id: user._id });
-
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({ success: true, token: token, status: 'Login Successful!', username: user.username });
+      bcrypt.compare(req.body.passwords, user.passwords, (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error comparing passwords.' });
+        }
+        if (!result) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication failed',
+            info: 'Invalid password'
+          });
+        }
+      
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication failed',
+            info: 'User not found'
+          });
+        }
+        var token = authenticate.getToken({ _id: user._id });
+        const infoUser = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imgAvt: user.imgAvt,
+          admin: user.admin,
+          username: user._id,
+        };
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ success: true, token: token, status: 'Login Successful!', info: infoUser, username: user._id });
+      });
+    
     })
     .catch((err) => {
       next(err);

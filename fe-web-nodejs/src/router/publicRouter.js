@@ -7,9 +7,10 @@ import ClassListPage from '../page/ClassList';
 import RegistPage from '../page/Login/register';
 const publicRoutes = [
     { path: '/login', component: LoginPage, Layout: AuthLayout },
+    { path: '/register', component: RegistPage, Layout: AuthLayout },
     { path: '/', component: HomePage, Layout: DefaultLayout },
     { path: '/class', component: ClassListPage, Layout: DefaultLayout },
-    { path: '/register', component: RegistPage, Layout: AuthLayout },
+    
 ];
 
 export default publicRoutes;
