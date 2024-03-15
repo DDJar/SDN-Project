@@ -1,25 +1,64 @@
-import React, { useState } from 'react';
-import { postLogin } from '../../service/loginService';
+import React, { useState, useEffect } from "react";
+import { postLogin, initiateGoogleLogin, initiateFacebookLogin } from "../../service/loginService";
+import Cookies from "js-cookie";
+
 function LoginPage() {
+  useEffect(() => {
+    const storedCookie = Cookies.get("info");
+    if (storedCookie) {
+      window.location.href = `/`;
+    }
+  }, []);
   const [userLogin, setUserLogin] = useState({
-    username: '',
-    password: ''
-  })
+    emailOrPhone: "",
+    passwords: "",
+  });
+  const [error, setError] = useState("");
   const [viewPass, setviewPass] = useState(true);
   const handViewPass = () => {
-    setviewPass(!viewPass)
-  }
+    setviewPass(!viewPass);
+  };
+  const validation = (value) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^\d{10}$/.test(value);
+  };
   const onSubmitLogin = async () => {
     try {
-      if (userLogin.username !== '' && userLogin.password !== '') {
+      if (userLogin.emailOrPhone !== "" && userLogin.password !== "") {
+        if (!validation(userLogin.emailOrPhone)) {
+          setError("Invalid email or phone format.");
+          return;
+        }
+        console.log(userLogin);
         let res = await postLogin(userLogin);
-        console.log(res.data);
+        console.log(res);
         window.location.href = `/`;
+      } else {
+        setError("Email/Phone and password are required.");
       }
+    } catch (error) {
+      if (error.response.status === 401) {
+        setError("Invalid email or phone or passwords")
+      } else {
+        console.error("Axios Error:", error);
+      }
+
+    }
+  };
+  const handleGoogleLogin = async () => {
+    try {
+      initiateGoogleLogin();
     } catch (error) {
       console.error("Axios Error:", error);
     }
   };
+  const handleFaceBookLogin = async () => {
+    try {
+      initiateFacebookLogin();
+    } catch (error) {
+      console.error("Facebook Login Error:", error);
+    }
+  };
+
   return (
     <div className="font-[sans-serif] text-[#333]">
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -27,10 +66,15 @@ function LoginPage() {
           <div className="md:max-w-md w-full sm:px-6 py-4">
             <form>
               <div className="mb-12">
-              
-                  <a href='/'><button type="button" className="btn btn-link"> {'<----'} Back Home</button></a>
-             
-                <h3 className="text-3xl font-extrabold">Sign in</h3>
+                <a href="/">
+                  <button type="button" className="btn btn-link">
+                    {" "}
+                    {"<----"} Back Home
+                  </button>
+                </a>
+
+                <h3 className="text-3xl font-extrabold">Login in</h3>
+                <h4 className="text-danger font-extrabold">{error}</h4>
                 <p className="text-sm mt-4 ">
                   Don't have an account{" "}
                   <a
@@ -42,15 +86,23 @@ function LoginPage() {
                 </p>
               </div>
               <div>
-                <label className="text-xs block mb-2">UserName</label>
+                <label className="text-xs block mb-2">
+                  Email Or PhoneNumber
+                </label>
                 <div className="relative flex items-center">
-                  <input onChange={(e) => setUserLogin({ ...userLogin, username: e.target.value })}
-                    value={userLogin.username}
+                  <input
+                    onChange={(e) =>
+                      setUserLogin({
+                        ...userLogin,
+                        emailOrPhone: e.target.value,
+                      })
+                    }
+                    value={userLogin.emailOrPhone}
                     name="username"
                     type="text"
                     required=""
                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
-                    placeholder="Enter username"
+                    placeholder="Enter email or phoneNumber"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -87,29 +139,35 @@ function LoginPage() {
                 <label className="text-xs block mb-2">Password</label>
                 <div className="relative flex items-center">
                   <input
-                    value={userLogin.password}
-                    onChange={(e) => setUserLogin({ ...userLogin, password: e.target.value })}
+                    value={userLogin.passwords}
+                    onChange={(e) =>
+                      setUserLogin({ ...userLogin, passwords: e.target.value })
+                    }
                     name="password"
                     type={viewPass ? `password` : `text`}
                     required=""
                     className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
                     placeholder="Enter password"
                   />
-                  {viewPass ? (<svg onClick={() => handViewPass(false)}
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="#bbb"
-                    stroke="#bbb"
-                    className="w-[18px] h-[18px] absolute right-2 cursor-pointer"
-                    viewBox="0 0 128 128"
-                  >
-                    <path
-                      d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
-                      data-original="#000000"
-                    />
-                  </svg>
+                  {viewPass ? (
+                    <svg
+                      onClick={() => handViewPass(false)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="#bbb"
+                      stroke="#bbb"
+                      className="w-[18px] h-[18px] absolute right-2 cursor-pointer"
+                      viewBox="0 0 128 128"
+                    >
+                      <path
+                        d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
+                        data-original="#000000"
+                      />
+                    </svg>
                   ) : (
-                    <svg onClick={() => handViewPass(true)}
-                      xmlns="http://www.w3.org/2000/svg" fill="#bbb"
+                    <svg
+                      onClick={() => handViewPass(true)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="#bbb"
                       stroke="#bbb"
                       className="w-[18px] h-[18px] absolute right-2 cursor-pointer"
                       viewBox="0 0 128 128"
@@ -123,17 +181,7 @@ function LoginPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between gap-2 mt-5">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm">
-                    Remember me
-                  </label>
-                </div>
+
                 <div>
                   <a
                     href="jajvascript:void(0);"
@@ -144,18 +192,23 @@ function LoginPage() {
                 </div>
               </div>
               <div className="mt-12">
-                <button onClick={onSubmitLogin}
+                <button
+                  onClick={onSubmitLogin}
                   type="button"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                 >
-                  Sign in
+                  Login
                 </button>
               </div>
               <p className="my-8 text-sm text-gray-400 text-center">
                 or continue with
               </p>
               <div className="space-x-8 flex justify-center">
-                <button type="button" className="border-none outline-none">
+                <button
+                  type="button"
+                  className="border-none outline-none"
+                  onClick={handleGoogleLogin}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30px"
@@ -194,20 +247,9 @@ function LoginPage() {
                     />
                   </svg>
                 </button>
-                <button type="button" className="border-none outline-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30px"
-                    fill="#000"
-                    viewBox="0 0 22.773 22.773"
-                  >
-                    <path
-                      d="M15.769 0h.162c.13 1.606-.483 2.806-1.228 3.675-.731.863-1.732 1.7-3.351 1.573-.108-1.583.506-2.694 1.25-3.561C13.292.879 14.557.16 15.769 0zm4.901 16.716v.045c-.455 1.378-1.104 2.559-1.896 3.655-.723.995-1.609 2.334-3.191 2.334-1.367 0-2.275-.879-3.676-.903-1.482-.024-2.297.735-3.652.926h-.462c-.995-.144-1.798-.932-2.383-1.642-1.725-2.098-3.058-4.808-3.306-8.276v-1.019c.105-2.482 1.311-4.5 2.914-5.478.846-.52 2.009-.963 3.304-.765.555.086 1.122.276 1.619.464.471.181 1.06.502 1.618.485.378-.011.754-.208 1.135-.347 1.116-.403 2.21-.865 3.652-.648 1.733.262 2.963 1.032 3.723 2.22-1.466.933-2.625 2.339-2.427 4.74.176 2.181 1.444 3.457 3.028 4.209z"
-                      data-original="#000000"
-                    />
-                  </svg>
-                </button>
-                <button type="button" className="border-none outline-none">
+
+                <button type="button" className="border-none outline-none"
+                  onClick={handleFaceBookLogin}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="30px"
@@ -233,8 +275,6 @@ function LoginPage() {
         </div>
       </div>
     </div>
-
-
   );
 }
 

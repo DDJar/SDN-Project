@@ -6,7 +6,8 @@ var passport = require('passport');
 router.use(bodyParser.json());
 var authenticate = require('../authenticate');
 const cors = require('./cors');
-
+const bcrypt = require('bcrypt');
+const { JSONCookie } = require('cookie-parser');
 // task 3 ass3
 router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   User.find({})
@@ -18,47 +19,93 @@ router.get('/', cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (r
     .catch((err) => next(err));
 });
 router.post('/signup', cors.corsWithOptions, (req, res, next) => {
-  User.register(new User({ username: req.body.username }),
-    req.body.password, (err, user) => {
-      if (err) {
-        res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({ err: err });
-      }
-      else {
-      if(req.body.firstname || req.body.lastname || req.body.email || req.body.address || req.body.dob){
-        user.firstname = req.body.firstname;
-        user.lastname = req.body.lastname;
-        user.email = req.body.email;
-        user.address = req.body.address;
-        user.dob = req.body.dob;
-      }
-        user.save().then(user => {
-          passport.authenticate('local', { session: false })(req, res, () => {
-            var token = authenticate.getToken({ _id: req.user._id });
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json({ success: true, token: token, status: 'Registration Successful!' });
-          });
-        }).catch(err => {
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({ err: err });
-        });;
-      }
+  const { firstName, lastName, email, phone, passwords } = req.body;
+
+  // Hash the password
+  bcrypt.hash(passwords, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error hashing the password.' });
+    }
+
+    // Create a new user with the hashed password
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phone,
+      passwords: hash,
     });
+
+    newUser.save()
+      .then((user) => {
+        const token = authenticate.getToken({ _id: user._id });
+        const infoUser = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imgAvt: user.imgAvt,
+          admin: user.admin,
+          username: user._id,
+        };
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ success: true, token: token, status: 'Login Successful!', info: infoUser, username: user._id });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      });
+  });
 });
-router.post('/login', cors.corsWithOptions, passport.authenticate('local', { session: false }), (req, res) => {
-  var token = authenticate.getToken({ _id: req.user._id });
-  const username = req.user.username;
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ success: true, token: token, username: username });
+router.post('/login', cors.corsWithOptions, (req, res, next) => {
+  const loginValue = req.body.emailOrPhone;
+  function isEmail(value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  }
+  const loginField = isEmail(loginValue) ? 'email' : 'phoneNumber';
+  User.findOne({ [loginField]: loginValue })
+    .then((user) => {
+      bcrypt.compare(req.body.passwords, user.passwords, (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error comparing passwords.' });
+        }
+        if (!result) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication failed',
+            info: 'Invalid password'
+          });
+        }
+      
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication failed',
+            info: 'User not found'
+          });
+        }
+        var token = authenticate.getToken({ _id: user._id });
+        const infoUser = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imgAvt: user.imgAvt,
+          admin: user.admin,
+          username: user._id,
+        };
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ success: true, token: token, status: 'Login Successful!', info: infoUser, username: user._id });
+      });
+    
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 router.get('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');
+    delete req.headers.authorization
     res.json({ success: true, status: 'Logout Successful!' });
   }
   else {
@@ -77,6 +124,29 @@ router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res
   }
 });
 
+
+router.get('/profile/:userId', async(req,res,next)=>{
+  User.findById(req.params.userId)
+  .then((user)=>{
+    res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(user);
+    },(err) => next(err))
+    .catch((err) => next(err));
+})
+
+router.put('/profile/:userId',async (req,res,next)=>{
+  User.findByIdAndUpdate(req.params.userId,{
+    $set:req.body
+},{new : true} )
+.then((user) => {
+    const username = req.body.firstName + req.body.lastName;
+    res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({...user,username: username});
+},(err) => next(err))
+.catch((err) => next(err))
+})
 
 
 module.exports = router;

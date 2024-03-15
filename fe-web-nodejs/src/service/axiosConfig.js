@@ -1,7 +1,8 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8000',
+    baseURL: 'http://localhost:5000' ,
     // headers: {
     //     'Content-Type': 'application/json',
     // },
@@ -12,7 +13,7 @@ instance.interceptors.request.use((config) => {
     config.headers = config.headers || {};
   
     // Lấy token từ local storage
-    const authToken = window.localStorage.getItem('accessToken');
+    const authToken = Cookies.get('token');
   
     // Kiểm tra xem token có tồn tại hay không
     if (authToken) {

@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {Dropdown} from "react-bootstrap";
 import { logout } from "../../service/loginService";
+import Cookies from "js-cookie";
 function Header() {
     const [username, setUsername] = useState("");
 
     useEffect(() => {
-        const storedUsername = localStorage.getItem("username");
+        const storedUsername = Cookies.get("info");
+       
         if (storedUsername) {
-            setUsername(storedUsername);
+            const userData = JSON.parse(storedUsername);
+            setUsername(`${userData.firstName} ${userData.lastName}`);
         }
     }, []);
     const handleLogout = () => {
@@ -45,7 +48,7 @@ function Header() {
                               {username && <span className="">Welcome, {username}!</span>}
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
-                                  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                                  <Dropdown.Item href="/profile">Profile</Dropdown.Item>
                                   <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
                                   <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
                               </Dropdown.Menu>
