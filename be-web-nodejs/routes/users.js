@@ -125,5 +125,28 @@ router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res
 });
 
 
+router.get('/profile/:userId', async(req,res,next)=>{
+  User.findById(req.params.userId)
+  .then((user)=>{
+    res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(user);
+    },(err) => next(err))
+    .catch((err) => next(err));
+})
+
+router.put('/profile/:userId',async (req,res,next)=>{
+  User.findByIdAndUpdate(req.params.userId,{
+    $set:req.body
+},{new : true} )
+.then((user) => {
+    const username = req.body.firstName + req.body.lastName;
+    res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({...user,username: username});
+},(err) => next(err))
+.catch((err) => next(err))
+})
+
 
 module.exports = router;
