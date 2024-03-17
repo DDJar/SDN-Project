@@ -9,7 +9,7 @@ classRouter.use(bodyParser.json());
 //task2 ass3
 classRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-    .get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
+    .get(cors.cors,authenticate.verifyUser, (req, res, next) => {
         Class.find({})
             .then((Class) => {
                 res.statusCode = 200;
@@ -18,7 +18,7 @@ classRouter.route('/')
             }, (err) => next(err))
             .catch((err) => next(err));
     })
-    .post(cors.corsWithOptions ,(req, res, next) => {
+    .post(cors.corsWithOptions ,authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Class.create(req.body)
             .then((classlist) => {
                 console.log('Classlist Created', classlist);

@@ -5,13 +5,14 @@ import { logout } from "../../service/loginService";
 import Cookies from "js-cookie";
 function Header() {
     const [username, setUsername] = useState("");
-
+    const [role, setURole] = useState("");
     useEffect(() => {
         const storedUsername = Cookies.get("info");
        
         if (storedUsername) {
             const userData = JSON.parse(storedUsername);
             setUsername(`${userData.firstName} ${userData.lastName}`);
+            setURole(`${userData.admin}`)
         }
     }, []);
     const handleLogout = () => {
@@ -49,7 +50,7 @@ function Header() {
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                   <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-                                  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                  {role === "true" ? (  <Dropdown.Item href="/add-class">Create Class</Dropdown.Item>):(<div></div>)}
                                   <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
                               </Dropdown.Menu>
                           </Dropdown>

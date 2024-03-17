@@ -29,9 +29,13 @@ function LoginPage() {
           return;
         }
         console.log(userLogin);
-        let res = await postLogin(userLogin);
-        console.log(res);
-        window.location.href = `/`;
+        await postLogin(userLogin).then((res)=>{
+          console.log(res);
+          window.location.href = `/`;
+        }).catch((error)=>{
+          setError("Email/Phone or password are wrong!");
+        });
+       
       } else {
         setError("Email/Phone and password are required.");
       }
