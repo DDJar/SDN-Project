@@ -51,12 +51,12 @@ function Header() {
                               <Dropdown.Menu>
                                   <Dropdown.Item href="/profile">Profile</Dropdown.Item>
                                   {role === "true" ? (  <Dropdown.Item href="/add-class">Create Class</Dropdown.Item>):(<div></div>)}
-                                  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                               </Dropdown.Menu>
                           </Dropdown>
-                          <button onClick={handleLogout} className="btn btn-primary px-5">
+                          {/* <button onClick={handleLogout} className="btn btn-primary px-5">
                             Logout
-                        </button>
+                        </button> */}
                       </div>
                         
                     )}

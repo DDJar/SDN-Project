@@ -30,7 +30,7 @@ function ClassListPage() {
                 {classtList.map((o) => (
                     <div key={o._id} className="col-lg-4 mb-5">
                         <div className="card border-0 bg-light shadow-sm pb-2">
-                            <img className="card-img-top mb-2" src="img/class-1.jpg" alt="" />
+                            <img className="card-img-top mb-2" src="assets/img/detail.jpg" alt="" />
                             <div className="card-body text-center">
                                 <input type="hidden" name="idClass" value={o._id} />
                                 <h4 className="card-title">
@@ -39,14 +39,7 @@ function ClassListPage() {
                                 </h4>
                             </div>
                             <div className="card-footer bg-transparent py-4 px-5">
-                                {/* <div className="row border-bottom">
-                                    <div className="col-6 py-1 text-right border-right"><strong>Teacher</strong></div>
-                                    <div className="col-6 py-1">
-                                        <a href={`ProfileById?idUser=${o.getIdUser()}`} className="table-link">
-                                            {o.getFullName()}
-                                        </a>
-                                    </div>
-                                </div> */}
+                                
                                 <div className="row border-bottom">
                                     <div className="col-6 py-1 text-right border-right"><strong>Age condition</strong></div>
                                     <div className="col-6 py-1">{o.condition}</div>
