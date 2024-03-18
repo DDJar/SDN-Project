@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import {Dropdown} from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { logout } from "../../service/loginService";
 import Cookies from "js-cookie";
 function Header() {
@@ -8,7 +8,7 @@ function Header() {
     const [role, setURole] = useState("");
     useEffect(() => {
         const storedUsername = Cookies.get("info");
-       
+
         if (storedUsername) {
             const userData = JSON.parse(storedUsername);
             setUsername(`${userData.firstName} ${userData.lastName}`);
@@ -36,7 +36,7 @@ function Header() {
                     <div className="navbar-nav font-weight-bold mx-auto py-0">
 
                     </div>
-                  
+
                     {!username && (
                         <Link to="/login" className="btn btn-primary px-5">
                             Login
@@ -50,13 +50,13 @@ function Header() {
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                   <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-                                  {role === "true" ? (  <Dropdown.Item href="/add-class">Create Class</Dropdown.Item>):(<div></div>)}
-                                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                                  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
                               </Dropdown.Menu>
                           </Dropdown>
-                          {/* <button onClick={handleLogout} className="btn btn-primary px-5">
+                          <button onClick={handleLogout} className="btn btn-primary px-5">
                             Logout
-                        </button> */}
+                        </button>
                       </div>
                         
                     )}
