@@ -93,16 +93,20 @@ const Profile = () => {
       <div className='grid grid-cols-5'>
         <div className="col-span-1 bg-slate-300">
           <ul className="content-start space-y-5 pl-0 my-5 text-center">
-            <li className="font-medium text-start px-4 py-2 w-full"><a href='/profile' className="hover:bg-gray-100 text-gray-700 no-underline"
+            <li className="font-medium text-start px-4 py-2 w-full"><a href='/profile' className=" text-gray-700 no-underline"
             >Account Details</a></li>
             <li className="font-medium text-start px-4 py-2 w-full"><a
               href='/profile'
-              className=" hover:bg-gray-100 no-underline text-gray-700"
+              className=" no-underline text-gray-700"
             >Child Profile</a></li>
             <li className="font-medium text-start px-4 py-2 w-full"><a
               href='/profile'
-              className=" hover:bg-gray-100 text-gray-700 no-underline"
+              className="text-gray-700 no-underline"
             >Account Settings</a></li>
+            <li className="font-medium text-start px-4 py-2 w-full"><a
+              href='/class'
+              className="text-gray-700 no-underline"
+            >Class Child</a></li>
             <li className="font-medium text-start align-bottom px-4 py-2 w-full"><button onClick={handleLogout} className="btn btn-primary px-5">
               Logout
             </button></li>
@@ -145,7 +149,9 @@ const Profile = () => {
                   </div>
                   <div className="mb-4">
                     <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" value={formData.dob} onChange={handleInputChange} className="mt-1 p-2 border rounded-md w-full" />
+                    <input type="date" id="dob" name="dob" value={new Intl.DateTimeFormat('en-UK', {
+                      year: 'numeric', month: 'numeric', day: '2-digit'
+                    }).format(new Date(Date.parse(formData.dob)))} onChange={handleInputChange} className="mt-1 p-2 border rounded-md w-full" />
                   </div>
                 </div>
                 <div className="mb-4">
@@ -220,7 +226,9 @@ const Profile = () => {
                       </label>
                       <input className=" appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="dob"
-                        value={userData.dob}
+                        value={new Intl.DateTimeFormat('en-UK', {
+                          year: 'numeric', month: 'numeric', day: '2-digit'
+                        }).format(new Date(Date.parse(userData.dob)))}
                         readOnly
                       />
                     </div>
