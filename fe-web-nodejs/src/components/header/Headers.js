@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import {Dropdown} from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { logout } from "../../service/loginService";
 import Cookies from "js-cookie";
 function Header() {
@@ -8,7 +8,7 @@ function Header() {
 
     useEffect(() => {
         const storedUsername = Cookies.get("info");
-       
+
         if (storedUsername) {
             const userData = JSON.parse(storedUsername);
             setUsername(`${userData.firstName} ${userData.lastName}`);
@@ -35,29 +35,29 @@ function Header() {
                     <div className="navbar-nav font-weight-bold mx-auto py-0">
 
                     </div>
-                  
+
                     {!username && (
                         <Link to="/login" className="btn btn-primary px-5">
                             Login
                         </Link>
                     )}
                     {username && (
-                          <div className="navbar-nav font-weight-bold py-0 d-flex mr-2">
-                          <Dropdown >
-                              <Dropdown.Toggle variant="light" id="dropdown-basic" >
-                              {username && <span className="">Welcome, {username}!</span>}
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                  <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-                                  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                              </Dropdown.Menu>
-                          </Dropdown>
-                          <button onClick={handleLogout} className="btn btn-primary px-5">
-                            Logout
-                        </button>
-                      </div>
-                        
+                        <div className="navbar-nav font-weight-bold py-0 leading-8 d-flex mr-2">
+                            <Dropdown >
+                                <Dropdown.Toggle variant="light" id="dropdown-basic" >
+                                    {username && <span className="">{username}</span>}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-2">Payment</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-2">Your Post</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-3"><button onClick={handleLogout} className="btn btn-danger mt-2 px-5">
+                                        Logout
+                                    </button></Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
+
                     )}
 
                 </nav>
