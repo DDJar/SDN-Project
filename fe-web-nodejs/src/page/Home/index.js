@@ -9,30 +9,13 @@ import Product from '../../components/product/Product.js';
 
 
 const Home = () => {
-    const [orderPopup, setOrderPopup] = React.useState(false);
-    const handleOrderPopup = () => {
-        setOrderPopup(!orderPopup);
-    };
-
-    React.useEffect(() => {
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-sine',
-            delay: 100,
-            offset: 100,
-        });
-        AOS.refresh();
-    }, []);
-
     return (
         <div>
-            <Hero  />
-         
-          <Product/>
-         
-            <Blog/>
-            <Banner  />
-          
+            <Hero />
+            <Product />
+            <Blog />
+            <Banner />
+
         </div>
     );
 };

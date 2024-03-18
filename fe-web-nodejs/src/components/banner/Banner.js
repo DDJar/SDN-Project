@@ -27,7 +27,7 @@ const Banner = () => {
                 </div>
               </div>
               <div className="text-center">
-              <a href className=" btn btn-primary mt-2 py-2 px-4">Learn More</a>
+              <a href="/" className=" btn btn-primary mt-2 py-2 px-4">Learn More</a>
               </div>
               
             </div>

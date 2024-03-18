@@ -45,7 +45,7 @@ function ClassListPage() {
                                     <div className="col-6 py-1">{o.condition}</div>
                                 </div>
                                 <div className="row border-bottom">
-                                    <div className="col-6 py-1 text-right border-right" for="seat"><strong>Total Seats</strong></div>
+                                    <div className="col-6 py-1 text-right border-right" ><strong>Total Seats</strong></div>
                                     <div className="col-6 py-1" name="totalSeat">{o.totalSeat}</div>
                                 </div>
                                 <div className="row border-bottom">

@@ -6,8 +6,7 @@ function RegistPage() {
         lastName: '',
         email: '',
         phone: '',
-        passwords: '',
-        username:''
+        passwords: ''
     })
     const [error,setError]=useState("")
     const [errors, setErrors] = useState({
@@ -31,22 +30,30 @@ function RegistPage() {
     const [option, setOption] = useState(true);
     const handOption = () => {
         if(option){
+           
+            setUserRegist({...userRegiste,email:""})
+            console.log("email"+userRegiste.email)
             setOption(!option)
         }else{
+            setUserRegist({...userRegiste,phone:""})
+            console.log("phone"+userRegiste.phone)
+           
             setOption(!option)
         }
       
     }
     const registerSubmit = async () => {
         try {
-            setUserRegist({ ...userRegiste, username: userRegiste.lastName + ' ' + userRegiste.firstName });
+            
             const emptyFields = Object.keys(userRegiste).filter(
                 (field) => field !== 'phone' && field !== 'email' && !userRegiste[field]
             );
+            console.log(emptyFields)
             if ((userRegiste.phone || userRegiste.email) && emptyFields.length === 0) {
                 if (userRegiste.passwords === confiromPass) {
                     if (errors) {
                         let res = await postRegist(userRegiste);
+                        console.log(res);
                         window.location.href = `/`;
                     } else {
                         setError("You miss some detail");

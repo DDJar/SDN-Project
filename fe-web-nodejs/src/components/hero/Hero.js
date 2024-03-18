@@ -10,7 +10,7 @@ function Hero() {
         <p className="text-white mb-4">Sea ipsum kasd eirmod kasd magna, est sea et diam ipsum est amet sed sit.
           Ipsum dolor no justo dolor et, lorem ut dolor erat dolore sed ipsum at ipsum nonumy amet. Clita
           lorem dolore sed stet et est justo dolore.</p>
-        <a href="contact.jsp" className="btn btn-secondary mt-1 py-3 px-5">Learn More</a>
+        <a href="/" className="btn btn-secondary mt-1 py-3 px-5">Learn More</a>
       </div>
       <div className="col-lg-6 text-center text-lg-right">
         <img className="img-fluid mt-5" src="./assets/img/header.png" alt="" />
