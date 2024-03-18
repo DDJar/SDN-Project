@@ -11,7 +11,7 @@ function Header() {
        
         if (storedUsername) {
             const userData = JSON.parse(storedUsername);
-            setUsername(`${userData.firstName} ${userData.lastName}`);
+            setUsername(`${userData.imgAvt}`);
             setURole(`${userData.admin}`)
         }
     }, []);
@@ -46,7 +46,7 @@ function Header() {
                           <div className="navbar-nav font-weight-bold py-0 d-flex mr-2">
                           <Dropdown >
                               <Dropdown.Toggle variant="light" id="dropdown-basic" >
-                              {username && <span className="">{username}</span>}
+                              <img  src={username} className="w-[40px] h-[40px] round-full"></img>
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                   <Dropdown.Item href="/profile">Profile</Dropdown.Item>
